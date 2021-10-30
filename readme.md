@@ -86,13 +86,17 @@ This will assign a port, defaulting to 8080. It can be different, but for rest o
 
 In your PuTTY Configuration window, go to Connection->SSH->Tunnels and fill
 in the following
+
+```
 Source port: 8080
-Destination: modgoesr:8080
+Destination: machine:8080
+```
 
 #### 4b. Tunnel the port: (via Unix)
 
-Type the command, replacing NASAID with your id and MODBSTX with one of the bastion servers
-ssh -L 8080:modgoesr:8080 NASAID@MODBSTX 
+Type the command, replacing YOURID and MACHINE
+
+`ssh -L 8080:machine:8080 YOURID@MACHINE`
 
 #### 4c. View the website:
 
