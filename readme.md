@@ -108,12 +108,30 @@ To test any changes you made to the code while in hypnotoad mode, you will need 
 
 Main Page:
 
+![Main Page](https://github.com/cgosmeyer/goes_website/blob/main/images/index.png?raw=true)
+
 Dashboard Form:
+
+![Dashboard Form](![image](https://user-images.githubusercontent.com/5558042/139557032-c774e6ce-a089-4161-8517-37a10610b9df.png)
 
 Dashboard:
 
+![Dashboard 1](https://github.com/cgosmeyer/goes_website/blob/main/images/dashboard1.png?raw=true)
+![Dashboard 2](https://github.com/cgosmeyer/goes_website/blob/main/images/dashboard2.png?raw=true)
+![Dashboard 3](https://github.com/cgosmeyer/goes_website/blob/main/images/dashboard3.png?raw=true)
+![Dashboard 4](https://github.com/cgosmeyer/goes_website/blob/main/images/dashboard4.png?raw=true)
+
 Dashboard Plot:
+
+![Dashboard Plot 1](https://github.com/cgosmeyer/goes_website/blob/main/images/dashboard_plot1.png?raw=true)
+![Dashboard Plot 2](https://github.com/cgosmeyer/goes_website/blob/main/images/dashboard_plot2.png?raw=true)
+
+User-Defined Plot:
+
+![User-Defined Plot 1](https://github.com/cgosmeyer/goes_website/blob/main/images/userdef_plot1.png?raw=true)
+![User-Defined Plot 2](https://github.com/cgosmeyer/goes_website/blob/main/images/userdef_plot2.png?raw=true)
 
 GOES-R Publications:
 
+![GOES-R Pubications](https://github.com/cgosmeyer/goes_website/blob/main/images/goesr_publications.png?raw=true)
 
