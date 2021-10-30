@@ -1,0 +1,212 @@
+% layout 'wrapper', title => 'Long-Term Plots';
+
+<!-- Long-term plots. Should show the 30-day, 365-day, and full mission -->
+
+<% use Chart::Gnuplot; =%>
+<% use DateTime::Format::Strptime qw( ); =%>
+<% use POSIX qw(strftime); =%>
+<% use Date::Calc qw(Day_of_Year); =%>
+<% use load_database; =%>
+
+<% if ($metric eq 'bbr') { $metric = 'ccr'; } =%>
+
+<!-- Create channel string -->
+<% my $chan_str; =%>
+<% if ($metric eq 'ccr') { $chan_str = $chan1.'-'.$chan2; } =%>
+<% else { $chan_str = $chan1; } =%>
+
+<!-- Construct the strings representing today's date and the start dates. -->
+<% my $epoc = time(); =%>
+<% my $datestr = strftime("%F", localtime($epoc)); =%>
+<% my $epoc_30 = $epoc - 30 * 24 * 60 * 60;   # 30 days before of current date. =%>
+<% my $datestr_30 = strftime("%F", localtime($epoc_30)); =%>
+<% my $epoc_365 = $epoc - 365 * 24 * 60 * 60;   # 365 days before of current date. =%>
+<% my $datestr_365 = strftime("%F", localtime($epoc_365)); =%>
+<% my $datestr_full; =%>
+<% if ($sat eq 'g16') {
+<% 	 $datestr_full = "2017-12-18"; =%>
+<% } elsif ($sat eq 'g17') {
+<%   $datestr_full = "2019-02-12"; =%>
+<% } =%>
+
+<!-- Read data from database -->
+<% my @satew_30; =%>
+<% my @satns_30; =%>
+<% my @satew_365; =%>
+<% my @satns_365; =%>
+<% my @satew_full; =%>
+<% my @satns_full; =%>
+
+<% if ($metric eq 'ccr') { =%>
+<%   @satew_30 = load_database::query_ccr_longterm('ew', $sat, $chan1, $chan2, $datestr_30, $datestr); =%>
+<%   @satns_30 = load_database::query_ccr_longterm('ns', $sat, $chan1, $chan2, $datestr_30, $datestr); =%>
+<%   @satew_365 = load_database::query_ccr_longterm('ew', $sat, $chan1, $chan2, $datestr_365, $datestr); =%>
+<%   @satns_365 = load_database::query_ccr_longterm('ns', $sat, $chan1, $chan2, $datestr_365, $datestr); =%>
+<%   @satew_full = load_database::query_ccr_longterm('ew', $sat, $chan1, $chan2, $datestr_full, $datestr); =%>
+<%   @satns_full = load_database::query_ccr_longterm('ns', $sat, $chan1, $chan2, $datestr_full, $datestr); =%>
+<% } else { =%>
+<%   @satew_30 = load_database::query_other_longterm($sat, $metric, 'ew', $chan1, $datestr_30, $datestr); =%>
+<%   @satns_30 = load_database::query_other_longterm($sat, $metric, 'ns', $chan1, $datestr_30, $datestr); =%>
+<%   @satew_365 = load_database::query_other_longterm($sat, $metric, 'ew', $chan1, $datestr_365, $datestr); =%>
+<%   @satns_365 = load_database::query_other_longterm($sat, $metric, 'ns', $chan1, $datestr_365, $datestr); =%>
+<%   @satew_365 = load_database::query_other_longterm($sat, $metric, 'ew', $chan1, $datestr_full, $datestr); =%>
+<%   @satns_365 = load_database::query_other_longterm($sat, $metric, 'ns', $chan1, $datestr_full, $datestr); =%>
+<% } =%>
+
+<!-- Divide the 30 day arrays into three arrays -->
+<% my @meanew_30; =%>
+<% my @threesigew_30; =%>
+<% my @dtew_30; =%>
+<% my @meanns_30; =%>
+<% my @threesigns_30; =%>
+<% my @dtns_30; =%>
+<% my $dt_temp; =%>
+<% my @dt_split; =%> 
+<% my $i; =%>
+<% for( $i = 0; $i < @satew_30; $i = $i + 3 ) { =%>
+<%   push @meanew_30, $satew_30[$i]; =%>
+<%   push @threesigew_30, $satew_30[$i+1]; =%>
+<%   @dt_split = split(/\-/, $satew_30[$i+2]); =%>
+<%   $dt_temp = $dt_split[0] + $dt_split[1]/12 + $dt_split[2]/(12*30); =%>
+<%   push @dtew_30, $dt_temp; =%>
+<%   =%>
+<%   push @meanns_30, $satns_30[$i]; =%>
+<%   push @threesigns_30, $satns_30[$i+1]; =%>
+<%   @dt_split = split(/\-/, $satns_30[$i+2]); =%>
+<%   $dt_temp = $dt_split[0] + $dt_split[1]/12 + $dt_split[2]/(12*30); =%>
+<%   push @dtns_30, $dt_temp; =%>
+<% } =%>
+
+<!-- Divide the 365 day arrays into three arrays -->
+<% my @meanew_365; =%>
+<% my @threesigew_365; =%>
+<% my @dtew_365; =%>
+<% my @meanns_365; =%>
+<% my @threesigns_365; =%>
+<% my @dtns_365; =%>
+<% my $j; =%>
+<% for( $j = 0; $j < @satew_365; $j = $j + 3 ) { =%>
+<%   push @meanew_365, $satew_365[$j]; =%>
+<%   push @threesigew_365, $satew_365[$j+1]; =%>
+<%   @dt_split = split(/\-/, $satew_365[$j+2]); =%>
+<%   $dt_temp = $dt_split[0] + $dt_split[1]/12 + $dt_split[2]/(12*30); =%>
+<%   push @dtew_365, $dt_temp; =%>
+<%   =%>
+<%   push @meanns_365, $satns_365[$j]; =%>
+<%   push @threesigns_365, $satns_365[$j+1]; =%>
+<%   @dt_split = split(/\-/, $satns_365[$j+2]); =%>
+<%   $dt_temp = $dt_split[0] + $dt_split[1]/12 + $dt_split[2]/(12*30); =%>
+<%   push @dtns_365, $dt_temp; =%>
+<% } =%>
+
+<!-- Divide the full mission arrays into three arrays -->
+<% my @meanew_full; =%>
+<% my @threesigew_full; =%>
+<% my @dtew_full; =%>
+<% my @meanns_full; =%>
+<% my @threesigns_full; =%>
+<% my @dtns_full; =%>
+<% my $j; =%>
+<% for( $j = 0; $j < @satew_full; $j = $j + 3 ) { =%>
+<%   push @meanew_full, $satew_full[$j]; =%>
+<%   push @threesigew_full, $satew_full[$j+1]; =%>
+<%   @dt_split = split(/\-/, $satew_full[$j+2]); =%>
+<%   $dt_temp = $dt_split[0] + $dt_split[1]/12 + $dt_split[2]/(12*30); =%>
+<%   push @dtew_full, $dt_temp; =%>
+<%   =%>
+<%   push @meanns_full, $satns_full[$j]; =%>
+<%   push @threesigns_full, $satns_full[$j+1]; =%>
+<%   @dt_split = split(/\-/, $satns_full[$j+2]); =%>
+<%   $dt_temp = $dt_split[0] + $dt_split[1]/12 + $dt_split[2]/(12*30); =%>
+<%   push @dtns_full, $dt_temp; =%>
+<% } =%>
+
+<!-- Calculate the start times -->
+<% my @line_split = split(/\-/, $datestr); =%>
+<% my $end_time = $line_split[0] + $line_split[1]/12 + $line_split[1]/(12*30); =%>
+<% my @line_split_30 = split(/\-/, $datestr_30); =%>
+<% my $start_time_30 = $line_split_30[0] + $line_split_30[1]/12 + $line_split_30[1]/(12*30); =%>
+<% my @line_split_365 = split(/\-/, $datestr_365); =%>
+<% my $start_time_365 = $line_split_365[0] + $line_split_365[1]/12 + $line_split_365[1]/(12*30); =%>
+<% my @line_split_full = split(/\-/, $datestr_full); =%>
+<% my $start_time_full = $line_split_full[0] + $line_split_full[1]/12 + $line_split_full[1]/(12*30); =%>
+
+<!-- 30 day plot -->
+<% my $title_30; =%>
+<% if ($metric eq 'ccr') { =%>
+<%   $title_30 = '30 days ' . uc($sat) . ' ' . uc($metric) . ' Channels ' . $chan_str; } =%>
+<% else {
+<%   $title_30 = '30 days ' . uc($sat) . ' ' . uc($metric) . ' Channel ' . $chan_str; } =%>
+
+<% my $dataSetew_30days = Chart::Gnuplot::DataSet->new(xdata => \@dtew_30, ydata => [\@meanew_30, \@threesigew_30], title =>  "EW 3*SD", style => "yerrorbars"); =%>
+<% my $dataSetns_30days = Chart::Gnuplot::DataSet->new(xdata => \@dtew_30, ydata => [\@meanns_30, \@threesigns_30], title =>  "NS 3*SD", style => "yerrorbars"); =%>
+
+<% my $chart_30days = Chart::Gnuplot->new(output => "public/trend_30days.png", title => $title_30, xlabel => "Date", ylabel => "Mean (urad)", grid => 'on', bg => {color => "white"}, xrange => [$start_time_30-.05, $end_time+.05], yrange => ["-30", "30"]); =%>
+
+<% $chart_30days->plot2d($dataSetew_30days, $dataSetns_30days); =%>
+
+<!-- 365 day plot -->
+<% my $title_365; =%>
+<% if ($metric eq 'ccr') { =%>
+<%   $title_365 = '365 days ' . uc($sat) . ' ' . uc($metric) . ' Channels ' . $chan_str; } =%>
+<% else {
+<%   $title_365 = '365 days ' . uc($sat) . ' ' . uc($metric) . ' Channel ' . $chan_str; } =%>
+
+<% my $dataSetew_365days = Chart::Gnuplot::DataSet->new(xdata => \@dtew_365, ydata => [\@meanew_365, \@threesigew_365], title =>  "EW 3*SD", style => "yerrorbars"); =%>
+<% my $dataSetns_365days = Chart::Gnuplot::DataSet->new(xdata => \@dtns_365, ydata => [\@meanns_365, \@threesigns_365], title =>  "NS 3*SD", style => "yerrorbars"); =%>
+
+<% my $chart_365days = Chart::Gnuplot->new(output => "public/trend_365days.png", title => $title_365, xlabel => "Date", ylabel => "Mean (urad)", grid => 'on', bg => {color => "white"}, xrange => [$start_time_365-.05, $end_time+.05], yrange => ["-30", "30"]); =%>
+
+<% $chart_365days->plot2d($dataSetew_365days, $dataSetns_365days); =%>
+
+<!-- full mission plot -->
+<% my $title_full; =%>
+<% if ($metric eq 'ccr') { =%>
+<%   $title_full = 'Full Mission ' . uc($sat) . ' ' . uc($metric) . ' Channels ' . $chan_str; } =%>
+<% else {
+<%   $title_full = 'Full Mission ' . uc($sat) . ' ' . uc($metric) . ' Channel ' . $chan_str; } =%>
+
+<% my $dataSetew_full = Chart::Gnuplot::DataSet->new(xdata => \@dtew_full, ydata => [\@meanew_full, \@threesigew_full], title =>  "EW 3*SD", style => "yerrorbars"); =%>
+<% my $dataSetns_full = Chart::Gnuplot::DataSet->new(xdata => \@dtns_full, ydata => [\@meanns_full, \@threesigns_full], title =>  "NS 3*SD", style => "yerrorbars"); =%>
+
+<% my $chart_full = Chart::Gnuplot->new(output => "public/trend_full.png", title => $title_full, xlabel => "Date", ylabel => "Mean (urad)", grid => 'on', bg => {color => "white"}, xrange => [$start_time_full-.05, $end_time+.05], yrange => ["-30", "30"]); =%>
+
+<% $chart_full->plot2d($dataSetew_full, $dataSetns_full); =%>
+
+
+<h1>Long-Term Trending Plots</h1>
+
+<section id="plots">
+	<h2> Long-Term Trend Plots </h2>
+	  <p> <a href="/trend_plot_form">Select another satellite / metric / channel</a>
+  | <a href="/about#ipats">About the metrics</a></p>
+
+  	<br>
+
+    <p> Satellite: <%= uc($sat) %> </p>
+    <p> Metric: <%= uc($metric) %> </p>
+    <p> Channel: <%= $chan_str; %> </p>
+
+    <br>
+
+    <h3> 30-day Trend </h3>
+    <p>
+    <img src="trend_30days.png">
+    </p>
+    <a href="trend_30days.png" download=<%= "trend_30days_test.png" %>> <button>Download Plot</button></a>
+    <br></br>
+
+    <h3> 365-day Trend </h3>
+    <p>
+    <img src="trend_365days.png">
+    </p>
+    <a href="trend_365days.png" download=<%= "trend_365days_test.png" %>> <button>Download Plot</button></a>
+    <br></br>
+
+    <h3> Full Mission Trend </h3>
+    <p>
+    <img src="trend_full.png">
+    </p>
+    <a href="trend_full.png" download=<%= "trend_full_test.png" %>> <button>Download Plot</button></a>
+    <br></br>    
+</section>

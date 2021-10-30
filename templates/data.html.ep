@@ -1,0 +1,8 @@
+% layout 'wrapper', title => 'Data';
+
+<h1>Data</h1>
+
+<section>
+    <p><a href="https://earthobservatory.nasa.gov/">Earth Observatory</a></p>
+    <p><a href="https://nsidc.org/data/viirs">VIIRS data at NSIDC</a></p>
+</section>

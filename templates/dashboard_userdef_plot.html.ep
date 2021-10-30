@@ -1,0 +1,174 @@
+% layout 'wrapper', title => 'User-Defined Plot';
+
+<% use Chart::Gnuplot; =%>
+<% use DateTime::Format::Strptime qw( ); =%>
+<% use Date::Calc qw(Day_of_Year); =%>
+
+<!-- Create uppercase versions of parameters -->
+<% if ($metric eq 'ccr') { $metric = 'bbr'; } =%>
+<% my $umetric = uc($metric); =%>
+<% my $usat = uc($sat); =%>
+<% my $udir = uc($dir); =%>
+
+<!-- Define parameters for file-reading and plotting-->
+<% my $plotname; =%>
+<% my $chart; =%>
+<% my $length; =%>
+<% my $title; =%>
+<% my $dataMin; =%>
+<% my $dataMax; =%>
+<% my @mean; =%>
+<% my @min; =%>
+<% my @max; =%>
+<% my @sigma; =%>
+<% my @datetime; =%>
+<% my @date; =%>
+<% my @time; =%>
+<% my $format = DateTime::Format::Strptime->new(pattern => '%m-%d-%Y%H:%M:%S', time_zone => 'local', on_error  => 'croak'); =%>
+
+<!-- Loop through file and read desired items from rows -->
+<% open my $open_file, '<', $filename or die "Failed to open $filename: $!\n"; =%>
+
+<% if ($metric eq 'bbr') { =%>
+<%   while(my $line = <$open_file>) { =%>
+<%      chomp $line; =%>
+<%      my @line_split = split(/\,/, $line); =%>
+<%      my $line_chan1 = $line_split[2]; =%>
+<%      my $line_chan2 = $line_split[3]; =%>
+<%      if ($line_chan1 eq $chan1) {  =%>
+<%      if ($line_chan2 eq $chan2) {  =%>
+<%        my $datetime_str = $line_split[4] . $line_split[5]; =%>
+<%        push @datetime, $format->parse_datetime($datetime_str); =%>
+<%        push @date, $line_split[4]; =%>
+<%        my @date_split = split(/\-/, $line_split[4]); =%>
+<%        my @time_split = split(/\:/, $line_split[5]); =%>  
+<%        push @time,  Day_of_Year($date_split[2], $date_split[0], $date_split[1]) - $dayofyear + $time_split[0]/24. + $time_split[1]/(1440.); =%>
+<%        if ($dir eq'ew') { =%>
+<%          push @mean, $line_split[7]; =%>
+<%          push @sigma, $line_split[8]/3 * $sigma; =%>
+<%          push @min, $line_split[9]; =%>
+<%          push @max, $line_split[10]; =%>
+<%          print $line_split[6]; =%>
+<%        } elsif ($dir eq 'ns') { =%>
+<%          push @mean, $line_split[11]; =%> 
+<%          push @sigma, $line_split[12]/3 * $sigma; =%>
+<%          push @min, $line_split[13]; =%>
+<%          push @max, $line_split[14]; =%>
+<%      } } } } =%>
+<%   $length = @datetime; =%>
+<%   $plotname = $sat.'_'.$metric.'_'.$dir.'_chan'.$chan1.'-'.$chan2.'_userdefined.png'; =%>
+<%   $title = "$usat CCR $udir Channels $chan1-$chan2",xlabel => "Time (UTC) $date[0] to $date[$length-1]"; =%>
+<% } else { =%>
+<%   while(my $line = <$open_file>) { =%>
+<%      chomp $line; =%>
+<%      my @line_split = split(/\,/, $line); =%>
+<%      my $line_chan1 = $line_split[2]; =%>
+<%      if ($line_chan1 eq $chan1) {  =%>
+<%        my $datetime_str = $line_split[3] . $line_split[4]; =%>
+<%        push @datetime, $format->parse_datetime($datetime_str); =%>
+<%        push @date, $line_split[3]; =%>
+<%        my @date_split = split(/\-/, $line_split[3]); =%>
+<%        my @time_split = split(/\:/, $line_split[4]); =%>  
+<%        push @time,  Day_of_Year($date_split[2], $date_split[0], $date_split[1]) - $dayofyear + $time_split[0]/24. + $time_split[1]/(1440.); =%>
+<%        if ($dir eq 'ew') { =%>
+<%          push @mean, $line_split[6]; =%>
+<%          push @sigma, $line_split[7]/3 * $sigma; =%>
+<%          push @min, $line_split[8]; =%>
+<%          push @max, $line_split[9]; =%>
+<%        } elsif ($dir eq 'ns') { =%>
+<%          push @mean, $line_split[10]; =%> 
+<%          push @sigma, $line_split[11]/3 * $sigma; =%>
+<%          push @min, $line_split[12]; =%>
+<%          push @max, $line_split[13]; =%>
+<%      } } } =%>
+<% 	 $length = @datetime; =%>
+<%   $plotname = $sat.'_'.$metric.'_'.$dir.'_chan'.$chan1.'_userdefined.png'; =%>
+<%   $title = "$usat $umetric $udir Channel $chan1",xlabel => "Time (UTC) $date[0] to $date[$length-1]"; =%>
+<% } =%>
+<% close $open_file or die "Failed to close $filename: $!\n"; =%>
+
+<!-- Initiate the chart object -->
+<% if ($yrange eq 'Auto') { =%>
+<%   $chart = Chart::Gnuplot->new(output => "public/userdefined.png", title => $title, xlabel => "Time (UTC) $date[0] to $date[$length-1]", ylabel => "Mean (urad)", grid => 'on', xtics  => { labels => ['"18:00" 0.75', '"20:00" 0.83', '"22:00" 0.92', '"0:00" 1.00', '"2:00" 1.08', '"4:00" 1.17', '"6:00" 1.25', '"8:00" 1.33', '"10:00" 1.42', '"12:00" 1.50', '"14:00" 1.58', '"16:00" 1.67', '"18:00" 1.75',],}, bg => {color => "white"}); }=%>
+<% elsif ($yrange eq 'Custom') { =%>
+<%   $chart = Chart::Gnuplot->new(output => "public/userdefined.png", title => $title, xlabel => "Time (UTC) $date[0] to $date[$length-1]", ylabel => "Mean (urad)", grid => 'on', xtics  => { labels => ['"18:00" 0.75', '"20:00" 0.83', '"22:00" 0.92', '"0:00" 1.00', '"2:00" 1.08', '"4:00" 1.17', '"6:00" 1.25', '"8:00" 1.33', '"10:00" 1.42', '"12:00" 1.50', '"14:00" 1.58', '"16:00" 1.67', '"18:00" 1.75',],}, yrange => [$yrange_min, $yrange_max], bg => {color => "white"}); }=%>
+
+<!-- Mean vs time -->
+<% my $title = $sigma . '*SD'; =%>
+<% my $dataSet; =%>
+<% if ($plot_sd eq 'Yes') { =%>
+<%   $dataSet = Chart::Gnuplot::DataSet->new(xdata => \@time, ydata => [\@mean, \@sigma], title => $title, style => "yerrorbars"); =%>
+<% } else { =%>
+<%   $dataSet = Chart::Gnuplot::DataSet->new(xdata => \@time, ydata => \@mean, style => "points"); } =%>
+
+<!-- Max and min lines -->
+<% if ($overplot_min eq 'Min') {
+    $dataMin = Chart::Gnuplot::DataSet->new(xdata => \@time, ydata => \@min, style => "linespoints", title => 'Min', color => 'green'); } =%>
+<% if ($overplot_max eq 'Max') {
+    $dataMax = Chart::Gnuplot::DataSet->new(xdata => \@time, ydata => \@max, style => "linespoints", title => 'Max', color => 'dark-green'); } =%>
+
+<% if ($overplot_max eq 'Max') { =%>
+<%   if ($overplot_min eq 'Min') { =%>
+<%     $chart->plot2d($dataSet, $dataMin, $dataMax); } =%>
+<%   else { =%>
+<%     $chart->plot2d($dataSet, $dataMax); } } =%>
+<% elsif ($overplot_min eq 'Min') { =%>
+<%   $chart->plot2d($dataSet, $dataMin); } =%>
+<% else { =%>
+<%   $chart->plot2d($dataSet); } =%>
+
+<!-- yrange string -->
+<% my $yrange_str; =%>
+<% if ($yrange eq 'Auto') { =%>
+<%   $yrange_str = 'Auto'; } =%>
+<% else { =%>
+<!-- If min or max left blank, set back to defaults -->
+<%   if ($yrange_min eq '' ) { $yrange_min = -30; } =%>
+<%   if ($yrange_max eq '' ) { $yrange_max = 30; } =%>
+<%   $yrange_str = '['.$yrange_min.', '.$yrange_max.']'; } =%>
+
+
+<section>
+	<h2> User-Defined Plot </h2>
+	  <p> <a href="/dashboard_form">Select another date / satellite</a>
+  | <a href="/about#ipats">About the metrics</a></p>
+
+    <br>
+
+    <p> Data from <%= $datetime[0]; %> to <%= $datetime[$length-1]; %> UTC </p>
+    <p> Plot error bars: <%= $plot_sd; %> </p>
+    <p> Overplot lines: <%= $overplot_min %> <%= $overplot_max %> </p>
+    <p> Y range: <%= $yrange_str; %> </p>
+    <p> Standard Deviations: <%= $sigma; %> </p>
+    <!-- <p> Aggregation: <%= $agg; %> </p> -->
+
+    <br>
+
+    <p> 
+    <img src="userdefined.png">
+    </p>
+
+    <p>
+    <a href="userdefined.png" download=<%= $plotname %>>Download Plot</a>
+    </p>
+    <p> 
+    <a href="" download="data.csv">Download Non-Aggregated Data</a>
+    </p>
+    <p>
+    <a href="" download="data.csv">Download Scene-Aggregated Data</a>
+    </p>
+    <p>
+    <a href="" download="data.csv">Download 24-Hour-Aggregated Data</a>
+    </p>
+
+    <!--
+    <a href="userdefined.png" download=<%= $plotname %>> <button>Download Plot</button></a>
+    <a href="" download="data.csv"> <button>Download Non-Aggregated Data</button></a>
+    <a href="" download="data.csv"> <button>Download Scene-Aggregated Data</button></a>
+    <a href="" download="data.csv"> <button>Download 24-Hour-Aggregated Data</button></a>
+    -->
+
+    <p>
+    Note: The data downloads include all the channels, not just the one selected.
+    </p>
+</section>

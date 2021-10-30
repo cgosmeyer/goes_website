@@ -1,0 +1,305 @@
+% layout 'wrapper', title => '24-Hour Dashboard Plots';
+
+<% use Chart::Gnuplot; =%>
+<% use DateTime::Format::Strptime qw( ); =%>
+<% use Date::Calc qw(Day_of_Year); =%>
+
+<% if ($metric eq 'ccr') { $metric = 'bbr'; } =%>
+<% my $umetric = uc($metric); =%>
+<% my @sat_num = split("g", $sat); =%>
+<% my $usat = uc($sat); =%>
+<% my @sat_num = split("g", $sat); =%>
+<% my $udir = uc($dir); =%>
+<% my $dayofyear_str; =%>
+<% if (length($dayofyear) == 1) { $dayofyear_str = '00'.$dayofyear;} =%>
+<% elsif (length($dayofyear) == 2) { $dayofyear_str = '0'.$dayofyear;} =%>
+<% else { $dayofyear_str = $dayofyear;} =%>
+
+<% my $path_to_data = ''; =%>
+<% my $filename = $usat."_".$umetric."_scenes_".$year."_".$dayofyear_str.".P*csv"; =%>
+<% my $searchstr = $path_to_data."INR_result_".$sat_num[-1]."/".$umetric."/".$filename; =%>
+<% print "$searchstr\n"; =%>
+
+<!-- Name of the plots -->
+<% my $mean_fixed = 'mean_fixed.png'; =%>
+<% my $mean_dynamic = 'mean_dynamic.png'; =%>
+<% my $title; =%>
+<% my $chart_mean_dynamic; =%>
+<% my $chart_mean_fixed; =%>
+<% my $dataSet_mean_dynamic; =%>
+<% my $dataSet_mean_fixed; =%>
+<% my $length; =%>
+<% my $plotname_dynamic; =%>
+<% my $plotname_fixed; =%>
+<% my $chan_str; =%>
+<% my @mean; =%>
+<% my @sigma; =%>
+<% my @datetime; =%>
+<% my @date; =%>
+<% my @time; =%>
+<% my $format = DateTime::Format::Strptime->new(pattern => '%m-%d-%Y%H:%M:%S', time_zone => 'local', on_error  => 'croak'); =%>
+
+<% if ($metric eq 'bbr') { $chan_str = $chan1.'-'.$chan2; } =%>
+<% else { $chan_str = $chan1; } =%>
+
+<!-- Loop through file and read desired items from lines -->
+<% my @files = glob($searchstr); =%>
+<% open my $open_file, '<', $files[0] or die "Failed to open $files[0]: $!\n"; =%>
+
+<% if ($metric eq 'bbr') { =%>
+<%   while(my $line = <$open_file>) { =%>
+<%      chomp $line; =%>
+<%      my @line_split = split(/\,/, $line); =%>
+<%      my $line_chan1 = $line_split[2]; =%>
+<%      my $line_chan2 = $line_split[3]; =%>
+<%      if ($line_chan1 eq $chan1) {  =%>
+<%      if ($line_chan2 eq $chan2) {  =%>
+<%        my $datetime_str = $line_split[4] . $line_split[5]; =%>
+<%        push @datetime, $format->parse_datetime($datetime_str); =%>
+<%        push @date, $line_split[4]; =%>
+<%        my @date_split = split(/\-/, $line_split[4]); =%>
+<%        my @time_split = split(/\:/, $line_split[5]); =%>  
+<%        push @time,  Day_of_Year($date_split[2], $date_split[0], $date_split[1]) - $dayofyear + $time_split[0]/24. + $time_split[1]/(1440.); =%>
+<%        if ($dir eq'ew') { =%>
+<%          push @mean, $line_split[7]; =%>
+<%          push @sigma, $line_split[8]; =%>
+<%          print $line_split[6]; =%>
+<%        } elsif ($dir eq 'ns') { =%>
+<%          push @mean, $line_split[11]; =%> 
+<%          push @sigma, $line_split[12]; =%>
+<%      } } } } =%>
+<%   $length = @datetime; =%>
+<%   $title = "$usat CCR $udir Channels $chan_str"; =%>
+<%   $plotname_dynamic = $sat.'_'.$metric.'_'.$dir.'_chan'.$chan_str.'_dynamic.png'; =%>
+<%   $plotname_fixed = $sat.'_'.$metric.'_'.$dir.'_chan'.$chan_str.'_fixed.png'; =%>
+<% } else { =%>
+<%   while(my $line = <$open_file>) { =%>
+<%      chomp $line; =%>
+<%      my @line_split = split(/\,/, $line); =%>
+<%      my $line_chan1 = $line_split[2]; =%>
+<%      if ($line_chan1 eq $chan1) {  =%>
+<%        my $datetime_str = $line_split[3] . $line_split[4]; =%>
+<%        push @datetime, $format->parse_datetime($datetime_str); =%>
+<%        push @date, $line_split[3]; =%>
+<%        my @date_split = split(/\-/, $line_split[3]); =%>
+<%        my @time_split = split(/\:/, $line_split[4]); =%>  
+<%        push @time,  Day_of_Year($date_split[2], $date_split[0], $date_split[1]) - $dayofyear + $time_split[0]/24. + $time_split[1]/(1440.); =%>
+<%        if ($dir eq 'ew') { =%>
+<%          push @mean, $line_split[6]; =%>
+<%          push @sigma, $line_split[7]; =%>
+<%          print $line_split[6]; =%>
+<%        } elsif ($dir eq 'ns') { =%>
+<%          push @mean, $line_split[10]; =%> 
+<%          push @sigma, $line_split[11]; =%>
+<%      } } } =%>
+<% 	 $length = @datetime; =%>
+<%   $title = "$usat $umetric $udir Channel $chan1"; =%>
+<%   $plotname_dynamic = $sat.'_'.$metric.'_'.$dir.'_chan'.$chan1.'_dynamic.png'; =%>
+<%   $plotname_fixed = $sat.'_'.$metric.'_'.$dir.'_chan'.$chan1.'_fixed.png'; =%>
+<% } =%>
+<% close $open_file or die "Failed to close $files[0]: $!\n"; =%>
+
+<!-- Check that there was data -->
+<!-- If don't do this, get an (uncatchable) error when data unavailable. -->
+<% if (@files != 0) { =%>
+<%   $dataSet_mean_dynamic = Chart::Gnuplot::DataSet->new(xdata => \@time, ydata => [\@mean, \@sigma], title =>  "3*SD", style => "yerrorbars"); =%>
+<%   $dataSet_mean_fixed = Chart::Gnuplot::DataSet->new(xdata => \@time, ydata => [\@mean, \@sigma], title =>  "3*SD", style => "yerrorbars"); =%>
+<% $chart_mean_dynamic = Chart::Gnuplot->new(output => "public/mean_dynamic.png", title => $title, xlabel => "Time (UTC) $date[0] to $date[$length-1]", ylabel => "Mean (urad)", grid => 'on', xtics  => { labels => ['"18:00" 0.75', '"20:00" 0.83', '"22:00" 0.92', '"0:00" 1.00', '"2:00" 1.08', '"4:00" 1.17', '"6:00" 1.25', '"8:00" 1.33', '"10:00" 1.42', '"12:00" 1.50', '"14:00" 1.58', '"16:00" 1.67', '"18:00" 1.75',],}, bg => {color => "white"},); =%>
+<% $chart_mean_fixed = Chart::Gnuplot->new(output => "public/mean_fixed.png", title => $title, ylabel => "Mean (urad)", grid => 'on', xtics  => { labels => ['"18:00" 0.75', '"20:00" 0.83', '"22:00" 0.92', '"0:00" 1.00', '"2:00" 1.08', '"4:00" 1.17', '"6:00" 1.25', '"8:00" 1.33', '"10:00" 1.42', '"12:00" 1.50', '"14:00" 1.58', '"16:00" 1.67', '"18:00" 1.75',],}, yrange => ["-30", "30"], bg => {color => "white"},); =%>
+<% $chart_mean_dynamic->plot2d($dataSet_mean_dynamic); =%>
+<% $chart_mean_fixed->plot2d($dataSet_mean_fixed); =%>
+<% } =%>
+
+<!-- Main page -->
+<section id="plots" hidden>
+	<h2> Dashboard Plots </h2>
+	  <p> 
+      <a href="/dashboard_form">Select another date/satellite</a>
+      | <a href="/about#ipats">About the metrics</a>
+    </p>
+
+    <br>
+
+    <h3> Dynamic Axis </h3> 
+    <a href="mean_dynamic.png" download=<%= $plotname_dynamic %>> Download Plot</a> | 
+    <a href="" download="data.csv">Download Data</a>
+    <p>
+    <img src="mean_dynamic.png">
+    </p>
+    <!--
+    <a href="mean_dynamic.png" download=<%= $plotname_dynamic %>> <button>Download Plot</button></a>
+    <a href="" download="data.csv"> <button>Download Data</button></a>
+    -->
+    <br></br>
+    <h3> Fixed Axis </h3>
+    <a href="mean_fixed.png" download=<%= $plotname_fixed %>> Download Plot</a> | 
+    <a href="" download="data.csv">Download Data</a>
+    <p>
+    <img src="mean_fixed.png">
+    </p>
+    <!--
+    <a href="mean_fixed.png" download=<%= $plotname_fixed %>> <button>Download Plot</button></a>
+    <a href="" download="data.csv"> <button>Download Data</button></a>
+    -->
+</section>
+
+<section id="plots_userdef">
+  <h2> User-Defined Plot </h2>
+
+  <p> This will open in a new tab. </p>
+
+  <p>
+    <form id="dateform" name="dateform" action="/dshbd_usrdf_plt" target="_blank" method="post">
+        <label for="overplot_min">Overplot Lines:</label>
+        <br>
+        <input type="radio" id="overplot_min" name="overplot_min" value="Min">Min
+        <input type="radio" id="overplot_max" name="overplot_max" value="Max">Max
+        <br><br>
+        <label for="plot_ds">Plot Standard Deviation:</label>
+        <br>
+        <input type="radio" id="sd_yes" name="plot_sd" value="Yes" onclick="sdClicked()">Yes
+        <input type="radio" id="sd_no" name="plot_sd" value="No" onclick="sdClicked()" checked>No
+        <div id="sd_div" hidden>
+            <label>Standard Deviations:</label>
+            <input type="number" min="0" size=2 maxlength=2 value="0" name="sigma" id="sigma">
+        </div>  
+        <br><br>
+        <label for="yrange_min">Y Range:</label>
+        <br>
+        <input type="radio" id="yrange_auto" name="yrange" value="Auto" onclick="yrangeClicked()" checked>Auto
+        <input type="radio" id="yrange_custom" name="yrange" value="Custom" onclick="yrangeClicked()">Custom 
+        <br>
+        <div id="yrange_div" hidden>
+          <input type="number" value="-30" id="yrange_min" name="yrange_min"> to 
+          <input type="number" value="30" id="yrange_max" name="yrange_max"> urad
+        </div>
+        <br>
+        <!-- # Disable aggregation for now.
+        <label for="agg_scenes">Aggregation:</label>
+        <br>
+        <input type="radio" id="agg_scene" name="agg" value="Scene" onclick="aggClicked()" checked>By Scene
+        <input type="radio" id="agg_none" name="agg" value="None" onclick="aggClicked()">None
+        <br><br>
+        -->
+        <div id="agg_div" hidden>
+          <label for="navchips">Chips:</label>
+          <br>
+          <select name="chips[]" multiple size="5" onchange="chipSelection()" id="navchips" hidden>
+            <option value="0">navChip0</option>
+            <option value="1">navChip1</option>
+            <option value="2">navChip2</option>
+            <option value="3">navChip3</option>
+            <option value="4">navChip4</option>
+            <option value="5">navChip5</option>
+          </select>
+          <select name="chips[]" multiple size="5" onchange="chipSelection()" id="ccrchips" hidden>
+            <option value="0">bbrChip0</option>
+            <option value="1">bbrChip1</option>
+            <option value="2">bbrChip2</option>
+            <option value="3">bbrChip3</option>
+            <option value="4">bbrChip4</option>
+            <option value="5">bbrChip5</option>
+          </select>
+          <select name="chips[]" multiple size="5" onchange="chipSelection()" id="ffrchips" hidden>
+            <option value="0">ffrChip0</option>
+            <option value="1">ffrChip1</option>
+            <option value="2">ffrChip2</option>
+            <option value="3">ffrChip3</option>
+            <option value="4">ffrChip4</option>
+            <option value="5">ffrChip5</option>
+          </select>
+        </div>
+        <br>
+        <input type=submit value="Submit">
+        <input type="reset" value="Reset">
+
+        <input name="filename" type="hidden" value= <%= $files[0] %>>
+        <input name="year" type="hidden" value= <%= $year %>>
+        <input name="dayofyear" type="hidden" value= <%= $dayofyear %>>
+        <input name="sat" type="hidden" value= <%= $sat %>>
+        <input name="metric" type="hidden" value= <%= $metric %>>
+        <input name="chan1" type="hidden" value= <%= $chan1 %>>
+        <input name="chan2" type="hidden" value= <%= $chan2 %>>
+        <input name="dir" type="hidden" value= <%= $dir %>>
+    </form>
+  </p>
+</section>
+
+<section id="error" hidden>
+	<h2> Dashboard Plots </h2>
+	  <p> <a href="/dashboard_form">Select another date/satellite</a>
+  | <a href="/about#ipats">About the metrics</a></p>
+
+    <h3> Warning! No data for metric <em><%= uc($metric) %></em> channel <em><%= $chan_str %></em>. </h3>
+</section>
+
+
+<!-- If data, show plot sections. Otherwise, show error section. -->
+<script>
+  <% if(@files != 0) { =%>
+  	document.getElementById("plots").hidden = false;
+  	document.getElementById("plots_userdef").hidden = false;
+  	document.getElementById("error").hidden = true;
+  <% } else { =%>
+  	document.getElementById("plots").hidden = true;
+  	document.getElementById("plots_userdef").hidden = true;
+  	document.getElementById("error").hidden = false;
+  <% } =%>
+</script>
+
+<!-- Unhide the custom standard deviation selection on user demand. -->
+<script>
+  function sdClicked() {
+    if(document.getElementById("sd_yes").checked) {
+      document.getElementById("sd_div").hidden = false;
+    }
+    if(document.getElementById("sd_no").checked) {
+      document.getElementById("sd_div").hidden = true;
+    }
+  }
+</script>
+
+<!-- Unhide the custom y-range on user demand. -->
+<script>
+  function yrangeClicked() {
+    if(document.getElementById("yrange_custom").checked) {
+      document.getElementById("yrange_div").hidden = false;
+    }
+    if(document.getElementById("yrange_auto").checked) {
+      document.getElementById("yrange_div").hidden = true;
+    }
+  }
+</script>
+
+<!-- Unhide the chip div on user demand. -->
+<script>
+  function aggClicked() {
+    if(document.getElementById("agg_none").checked) {
+      document.getElementById("agg_div").hidden = false;
+    }
+    if(document.getElementById("agg_scene").checked) {
+      document.getElementById("agg_div").hidden = true;
+    }
+  }
+</script>
+
+<!-- Unhide the chip dropdowns according to which metric selected. -->
+<script>
+  function chipSelection() {
+    <% if ($metric eq 'ccr') { =%>
+      document.getElementById("ccrchips").hidden = false;
+      document.getElementById("ffrchips").hidden = true;
+      document.getElementById("navchips").hidden = true;
+    <% } =%>
+    <% if ($metric eq 'ffr') { =%>
+      document.getElementById("ccrchips").hidden = true;
+      document.getElementById("ffrchips").hidden = false;
+      document.getElementById("navchips").hidden = true;
+    <% } =%>
+    <% else { =%>
+      document.getElementById("ccrchips").hidden = true;
+      document.getElementById("ffrchips").hidden = true;
+      document.getElementById("navchips").hidden = false;
+    <% } =%>
+  }
+</script>

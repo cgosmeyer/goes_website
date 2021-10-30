@@ -1,0 +1,64 @@
+% layout 'wrapper', title => 'GOES-R Dashboard Form';
+
+<h1>GOES-R Status Dashboard Form</h1>
+
+<section>
+  <h2> Make selections to view GOES-R ABI dashboard for 24-hour period ending on selected date. </h2>
+
+  <p>
+    <a href="/trend_plot_form">View long-term trend plots</a> | <a href="/custom_plot_form">Order custom plots</a> | <a href="/about#ipats">About the metrics</a>
+  </p>
+
+  <br></br>
+
+    <div class="row">
+      <div class="column">
+
+          <!-- When clicked, this queries database for given valid date and 
+          regenerate the page. -->
+          <p>
+            <form id="dateform" name="dateform" action="/dashboard" target="_blank" method="post">
+                <label for="sat_g16">Select Satellite:</label>
+                <br>
+                <input type="radio" id="sat_g16" name="sat" value="g16" checked onchange="set_mindate()">G16
+                <input type="radio" id="sat_g17" name="sat" value="g17" onchange="set_mindate()">G17
+                <br><br>
+                <label for="date_selector">Select Date:</label>
+                <br>
+                <input type="date" id="date_selector" name="selected_date">
+                <br><br>
+                <input type=submit value="Submit">
+                <input type="reset" value="Reset">
+            </form>
+          </p>
+
+      </div>
+</section>
+
+
+<script>
+  var today = new Date();
+  var dd = today.getDate();
+  var mm = today.getMonth()+1; //January is 0!
+  var yyyy = today.getFullYear();
+  if(dd<10){
+    dd='0'+dd
+  } 
+  if(mm<10){
+    mm='0'+mm
+  } 
+  <!-- Set the initial value of the calendar date to be today (as max value) -->
+  document.getElementById("date_selector").setAttribute("max", yyyy+'-'+mm+'-'+dd);
+  document.getElementById("date_selector").setAttribute("value", yyyy+'-'+mm+'-'+dd);
+</script>
+
+<script>
+function set_mindate() {
+  if(document.getElementById("sat_g16").checked) {
+    document.getElementById("date_selector").setAttribute("min", "2017-12-18");
+  }
+  if(document.getElementById("sat_g17").checked) {
+    document.getElementById("date_selector").setAttribute("min", "2019-02-12");
+  }
+}
+</script>

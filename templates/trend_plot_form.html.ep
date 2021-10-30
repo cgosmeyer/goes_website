@@ -1,0 +1,546 @@
+% layout 'wrapper', title => 'Long-Term Plot Form';
+
+<!-- Form to pick out the long-term trending plots. Should show the 30-day, 365-day, and full mission. -->
+
+
+<h1>Long-Term Trending Plot Form</h1>
+
+<section>
+  <h2> Make selections to view trending plots of last 30 days, 365 days, and full mission. </h2>
+
+  <p> 
+    <a href="/dashboard_form">View 24-hour GOES-R plots & status dashboard</a> | <a href="/custom_plot_form">Order custom plots</a> | <a href="/about#ipats">About the metrics</a>
+  </p>
+
+  <br></br>
+
+    <!-- When clicked, this queries database for given valid satellite, channels, metric
+      and plots results in new tab. -->
+    <form id="dateform" name="dateform" action="/trend_plot" target="_blank" method="post">
+
+    <div class="row">
+      <div class="column">
+        <label for="sat_g16">Satellite:</label>
+        <br>
+        <input type="radio" id="sat_g16" name="sat" value="g16" checked onchange="set_mindate()">G16
+        <input type="radio" id="sat_g17" name="sat" value="g17" onchange="set_mindate()">G17
+      </div>
+
+      <div class="column">
+        <b>Metric:</b>
+        <br>
+        <input type="radio" id="met_nav" name="metric" value="nav" onclick="metricClicked()" checked>NAV
+        <input type="radio" id="met_bbr" name="metric" value="bbr" onclick="metricClicked()">CCR
+        <input type="radio" id="met_ffr" name="metric" value="ffr" onclick="metricClicked()">FFR
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="column">
+        <div id="div_bnd1">
+          <br></br>
+          <label for="bnd1_01">Channel:</label>
+          <br>
+          <input type="radio" id="bnd1_01" name="chan1" value="1" checked onchange="band1Changed()"> 1
+          <input type="radio" id="bnd1_02" name="chan1" value="2" onchange="band1Changed()"> 2
+          <input type="radio" id="bnd1_03" name="chan1" value="3" onchange="band1Changed()"> 3
+          <input type="radio" id="bnd1_04" name="chan1" value="4" disabled onchange="band1Changed()"> 4
+          <input type="radio" id="bnd1_05" name="chan1" value="5" onchange="band1Changed()"> 5
+          <input type="radio" id="bnd1_06" name="chan1" value="6" onchange="band1Changed()"> 6<br>
+          <input type="radio" id="bnd1_07" name="chan1" value="7" onchange="band1Changed()"> 7
+          <input type="radio" id="bnd1_08" name="chan1" value="8" disabled onchange="band1Changed()"> 8
+          <input type="radio" id="bnd1_09" name="chan1" value="9" disabled onchange="band1Changed()"> 9
+          <input type="radio" id="bnd1_10" name="chan1" value="10" disabled onchange="band1Changed()">10
+          <input type="radio" id="bnd1_11" name="chan1" value="11" disabled onchange="band1Changed()">11
+          <input type="radio" id="bnd1_12" name="chan1" value="12" onchange="band1Changed()">12<br>
+          <input type="radio" id="bnd1_13" name="chan1" value="13" onchange="band1Changed()">13
+          <input type="radio" id="bnd1_14" name="chan1" value="14" onchange="band1Changed()">14
+          <input type="radio" id="bnd1_15" name="chan1" value="15" onchange="band1Changed()">15
+          <input type="radio" id="bnd1_16" name="chan1" value="16" onchange="band1Changed()">16
+        </div>
+      </div>
+      <div class="column">
+        <div id="div_bnd2" hidden>
+          <br></br>
+          <label for="bnd2_01">Second Channel:</label>
+          <br>
+          <input type="radio" id="bnd2_01" name="chan2" value="1" checked onchange="band2Changed()"> 1
+          <input type="radio" id="bnd2_02" name="chan2" value="2" onchange="band2Changed()"> 2
+          <input type="radio" id="bnd2_03" name="chan2" value="3" onchange="band2Changed()"> 3
+          <input type="radio" id="bnd2_04" name="chan2" value="4" onchange="band2Changed()"> 4
+          <input type="radio" id="bnd2_05" name="chan2" value="5" onchange="band2Changed()"> 5
+          <input type="radio" id="bnd2_06" name="chan2" value="6" onchange="band2Changed()"> 6<br>
+          <input type="radio" id="bnd2_07" name="chan2" value="7" onchange="band2Changed()"> 7
+          <input type="radio" id="bnd2_08" name="chan2" value="8" onchange="band2Changed()"> 8
+          <input type="radio" id="bnd2_09" name="chan2" value="9" onchange="band2Changed()"> 9
+          <input type="radio" id="bnd2_10" name="chan2" value="10" onchange="band2Changed()">10
+          <input type="radio" id="bnd2_11" name="chan2" value="11" onchange="band2Changed()">11
+          <input type="radio" id="bnd2_12" name="chan2" value="12" onchange="band2Changed()">12<br>
+          <input type="radio" id="bnd2_13" name="chan2" value="13" onchange="band2Changed()">13
+          <input type="radio" id="bnd2_14" name="chan2" value="14" onchange="band2Changed()">14
+          <input type="radio" id="bnd2_15" name="chan2" value="15" onchange="band2Changed()">15
+          <input type="radio" id="bnd2_16" name="chan2" value="16" onchange="band2Changed()">16
+        </div>
+      </div>
+    </div>
+
+    <br></br>
+    <input type=submit value="Submit">
+    <input type="reset" value="Reset">
+
+  </form>
+</section>
+
+<script>
+  function metricClicked() {
+    if (document.getElementById("met_nav").checked){
+      document.getElementById("div_bnd2").hidden = true;
+      
+      document.getElementById("bnd1_01").checked = true;
+      document.getElementById("bnd1_02").checked = false;
+      document.getElementById("bnd1_03").checked = false;
+      document.getElementById("bnd1_04").checked = false;
+      document.getElementById("bnd1_05").checked = false;
+      document.getElementById("bnd1_06").checked = false;
+      document.getElementById("bnd1_07").checked = false;
+      document.getElementById("bnd1_08").checked = false;
+      document.getElementById("bnd1_09").checked = false;
+      document.getElementById("bnd1_10").checked = false;
+      document.getElementById("bnd1_11").checked = false;
+      document.getElementById("bnd1_12").checked = false;
+      document.getElementById("bnd1_13").checked = false;
+      document.getElementById("bnd1_14").checked = false;
+      document.getElementById("bnd1_15").checked = false;
+      document.getElementById("bnd1_16").checked = false;
+
+      document.getElementById("bnd1_01").disabled = false;
+      document.getElementById("bnd1_02").disabled = false;
+      document.getElementById("bnd1_03").disabled = false;
+      document.getElementById("bnd1_04").disabled = true;
+      document.getElementById("bnd1_05").disabled = false;
+      document.getElementById("bnd1_06").disabled = false;
+      document.getElementById("bnd1_07").disabled = false;      
+      document.getElementById("bnd1_08").disabled = true;
+      document.getElementById("bnd1_09").disabled = true;
+      document.getElementById("bnd1_10").disabled = true;
+      document.getElementById("bnd1_11").disabled = true;
+      document.getElementById("bnd1_12").disabled = false;
+      document.getElementById("bnd1_13").disabled = false;
+      document.getElementById("bnd1_14").disabled = false;
+      document.getElementById("bnd1_15").disabled = false;
+      document.getElementById("bnd1_16").disabled = false;
+    }
+    else if (document.getElementById("met_bbr").checked) {
+      document.getElementById("div_bnd1").style.width= "50%";
+      document.getElementById("div_bnd2").hidden = false;
+      document.getElementById("bnd2_01").checked = true;
+      document.getElementById("bnd2_02").checked = false;
+      document.getElementById("bnd2_03").checked = false;
+      document.getElementById("bnd2_04").checked = false;
+      document.getElementById("bnd2_05").checked = false;
+      document.getElementById("bnd2_06").checked = false;
+      document.getElementById("bnd2_07").checked = false;
+      document.getElementById("bnd2_08").checked = false;
+      document.getElementById("bnd2_09").checked = false;
+      document.getElementById("bnd2_10").checked = false;
+      document.getElementById("bnd2_11").checked = false;
+      document.getElementById("bnd2_12").checked = false;
+      document.getElementById("bnd2_13").checked = false;
+      document.getElementById("bnd2_14").checked = false;
+      document.getElementById("bnd2_15").checked = false;
+      document.getElementById("bnd2_16").checked = false;
+
+      document.getElementById("bnd1_01").disabled = true;
+      document.getElementById("bnd1_04").disabled = false;
+      document.getElementById("bnd1_08").disabled = false;
+      document.getElementById("bnd1_09").disabled = false;
+      document.getElementById("bnd1_10").disabled = false;
+      document.getElementById("bnd1_11").disabled = false;
+
+      document.getElementById("bnd1_02").checked = true;
+    } else {
+      document.getElementById("div_bnd1").style.width = "100%";
+      document.getElementById("div_bnd2").hidden = true;
+      document.getElementById("bnd2_01").checked = true;
+      document.getElementById("bnd2_02").checked = false;
+      document.getElementById("bnd2_03").checked = false;
+      document.getElementById("bnd2_04").checked = false;
+      document.getElementById("bnd2_05").checked = false;
+      document.getElementById("bnd2_06").checked = false;
+      document.getElementById("bnd2_07").checked = false;
+      document.getElementById("bnd2_08").checked = false;
+      document.getElementById("bnd2_09").checked = false;
+      document.getElementById("bnd2_10").checked = false;
+      document.getElementById("bnd2_11").checked = false;
+      document.getElementById("bnd2_12").checked = false;
+      document.getElementById("bnd2_13").checked = false;
+      document.getElementById("bnd2_14").checked = false;
+      document.getElementById("bnd2_15").checked = false;
+      document.getElementById("bnd2_16").checked = false;
+
+      document.getElementById("bnd1_01").checked = true;
+      document.getElementById("bnd1_01").disabled = false;
+      document.getElementById("bnd1_02").disabled = false;
+      document.getElementById("bnd1_03").disabled = false;
+      document.getElementById("bnd1_04").disabled = false;
+      document.getElementById("bnd1_05").disabled = false;
+      document.getElementById("bnd1_06").disabled = false;
+      document.getElementById("bnd1_07").disabled = false;      
+      document.getElementById("bnd1_08").disabled = false;
+      document.getElementById("bnd1_09").disabled = false;
+      document.getElementById("bnd1_10").disabled = false;
+      document.getElementById("bnd1_11").disabled = false;
+      document.getElementById("bnd1_12").disabled = false;
+      document.getElementById("bnd1_13").disabled = false;
+      document.getElementById("bnd1_14").disabled = false;
+      document.getElementById("bnd1_15").disabled = false;
+      document.getElementById("bnd1_16").disabled = false;
+    }
+  }
+
+  function band2Changed() {
+    var anyTrue = false;
+    anyTrue = anyTrue || document.getElementById("bnd2_01").checked;
+    anyTrue = anyTrue || document.getElementById("bnd2_02").checked;
+    anyTrue = anyTrue || document.getElementById("bnd2_03").checked;
+    anyTrue = anyTrue || document.getElementById("bnd2_04").checked;
+    anyTrue = anyTrue || document.getElementById("bnd2_05").checked;
+    anyTrue = anyTrue || document.getElementById("bnd2_06").checked;
+    anyTrue = anyTrue || document.getElementById("bnd2_07").checked;
+    anyTrue = anyTrue || document.getElementById("bnd2_08").checked;
+    anyTrue = anyTrue || document.getElementById("bnd2_09").checked;
+    anyTrue = anyTrue || document.getElementById("bnd2_10").checked;
+    anyTrue = anyTrue || document.getElementById("bnd2_11").checked;
+    anyTrue = anyTrue || document.getElementById("bnd2_12").checked;
+    anyTrue = anyTrue || document.getElementById("bnd2_13").checked;
+    anyTrue = anyTrue || document.getElementById("bnd2_14").checked;
+    anyTrue = anyTrue || document.getElementById("bnd2_15").checked;
+    anyTrue = anyTrue || document.getElementById("bnd2_16").checked;
+    if (!anyTrue) {
+      document.getElementById("bnd2_01").checked = true;
+      document.getElementById("bnd1_02").disabled = false;
+      document.getElementById("bnd1_03").disabled = false;
+      document.getElementById("bnd1_04").disabled = false;
+      document.getElementById("bnd1_05").disabled = false;
+      document.getElementById("bnd1_06").disabled = false;
+      document.getElementById("bnd1_07").disabled = false;
+      document.getElementById("bnd1_08").disabled = false;
+      document.getElementById("bnd1_09").disabled = false;
+      document.getElementById("bnd1_10").disabled = false;
+      document.getElementById("bnd1_11").disabled = false;
+      document.getElementById("bnd1_12").disabled = false;
+      document.getElementById("bnd1_13").disabled = false;
+      document.getElementById("bnd1_14").disabled = false;
+      document.getElementById("bnd1_15").disabled = false;
+      document.getElementById("bnd1_16").disabled = false;
+    }
+
+    if(document.getElementById("bnd2_01").checked) {
+      document.getElementById("bnd1_01").disabled = true;
+      document.getElementById("bnd1_02").disabled = false;
+      document.getElementById("bnd1_03").disabled = false;
+      document.getElementById("bnd1_04").disabled = false;
+      document.getElementById("bnd1_05").disabled = false;
+      document.getElementById("bnd1_06").disabled = false;
+      document.getElementById("bnd1_07").disabled = false;
+      document.getElementById("bnd1_08").disabled = false;
+      document.getElementById("bnd1_09").disabled = false;
+      document.getElementById("bnd1_10").disabled = false;
+      document.getElementById("bnd1_11").disabled = false;
+      document.getElementById("bnd1_12").disabled = false;
+      document.getElementById("bnd1_13").disabled = false;
+      document.getElementById("bnd1_14").disabled = false;
+      document.getElementById("bnd1_15").disabled = false;
+      document.getElementById("bnd1_16").disabled = false;
+      document.getElementById("bnd1_02").checked = true;
+    }
+    else if(document.getElementById("bnd2_02").checked) {
+      document.getElementById("bnd1_01").disabled = true;
+      document.getElementById("bnd1_02").disabled = true;
+      document.getElementById("bnd1_03").disabled = false;
+      document.getElementById("bnd1_04").disabled = false;
+      document.getElementById("bnd1_05").disabled = false;
+      document.getElementById("bnd1_06").disabled = false;
+      document.getElementById("bnd1_07").disabled = false;
+      document.getElementById("bnd1_08").disabled = false;
+      document.getElementById("bnd1_09").disabled = false;
+      document.getElementById("bnd1_10").disabled = false;
+      document.getElementById("bnd1_11").disabled = false;
+      document.getElementById("bnd1_12").disabled = false;
+      document.getElementById("bnd1_13").disabled = false;
+      document.getElementById("bnd1_14").disabled = false;
+      document.getElementById("bnd1_15").disabled = false;
+      document.getElementById("bnd1_16").disabled = false;
+      document.getElementById("bnd1_03").checked = true;
+    }
+    else if(document.getElementById("bnd2_03").checked) {
+      document.getElementById("bnd1_01").disabled = true;
+      document.getElementById("bnd1_02").disabled = true;
+      document.getElementById("bnd1_03").disabled = true;
+      document.getElementById("bnd1_04").disabled = false;
+      document.getElementById("bnd1_05").disabled = false;
+      document.getElementById("bnd1_06").disabled = false;
+      document.getElementById("bnd1_07").disabled = false;
+      document.getElementById("bnd1_08").disabled = false;
+      document.getElementById("bnd1_09").disabled = false;
+      document.getElementById("bnd1_10").disabled = false;
+      document.getElementById("bnd1_11").disabled = false;
+      document.getElementById("bnd1_12").disabled = false;
+      document.getElementById("bnd1_13").disabled = false;
+      document.getElementById("bnd1_14").disabled = false;
+      document.getElementById("bnd1_15").disabled = false;
+      document.getElementById("bnd1_16").disabled = false;
+      document.getElementById("bnd1_04").checked = true;
+    }
+    else if(document.getElementById("bnd2_04").checked) {
+      document.getElementById("bnd1_01").disabled = true;
+      document.getElementById("bnd1_02").disabled = true;
+      document.getElementById("bnd1_03").disabled = true;
+      document.getElementById("bnd1_04").disabled = true;
+      document.getElementById("bnd1_05").disabled = false;
+      document.getElementById("bnd1_06").disabled = false;
+      document.getElementById("bnd1_07").disabled = false;
+      document.getElementById("bnd1_08").disabled = false;
+      document.getElementById("bnd1_09").disabled = false;
+      document.getElementById("bnd1_10").disabled = false;
+      document.getElementById("bnd1_11").disabled = false;
+      document.getElementById("bnd1_12").disabled = false;
+      document.getElementById("bnd1_13").disabled = false;
+      document.getElementById("bnd1_14").disabled = false;
+      document.getElementById("bnd1_15").disabled = false;
+      document.getElementById("bnd1_16").disabled = false;
+      document.getElementById("bnd1_05").checked = true;
+    }
+    else if(document.getElementById("bnd2_05").checked) {
+      document.getElementById("bnd1_01").disabled = true;
+      document.getElementById("bnd1_02").disabled = true;
+      document.getElementById("bnd1_03").disabled = true;
+      document.getElementById("bnd1_04").disabled = true;
+      document.getElementById("bnd1_05").disabled = true;
+      document.getElementById("bnd1_06").disabled = false;
+      document.getElementById("bnd1_07").disabled = false;
+      document.getElementById("bnd1_08").disabled = false;
+      document.getElementById("bnd1_09").disabled = false;
+      document.getElementById("bnd1_10").disabled = false;
+      document.getElementById("bnd1_11").disabled = false;
+      document.getElementById("bnd1_12").disabled = false;
+      document.getElementById("bnd1_13").disabled = false;
+      document.getElementById("bnd1_14").disabled = false;
+      document.getElementById("bnd1_15").disabled = false;
+      document.getElementById("bnd1_16").disabled = false;
+      document.getElementById("bnd1_06").checked = true;
+    }
+    else if(document.getElementById("bnd2_06").checked) {
+      document.getElementById("bnd1_01").disabled = true;
+      document.getElementById("bnd1_02").disabled = true;
+      document.getElementById("bnd1_03").disabled = true;
+      document.getElementById("bnd1_04").disabled = true;
+      document.getElementById("bnd1_05").disabled = true;
+      document.getElementById("bnd1_06").disabled = true;
+      document.getElementById("bnd1_07").disabled = false;
+      document.getElementById("bnd1_08").disabled = false;
+      document.getElementById("bnd1_09").disabled = false;
+      document.getElementById("bnd1_10").disabled = false;
+      document.getElementById("bnd1_11").disabled = false;
+      document.getElementById("bnd1_12").disabled = false;
+      document.getElementById("bnd1_13").disabled = false;
+      document.getElementById("bnd1_14").disabled = false;
+      document.getElementById("bnd1_15").disabled = false;
+      document.getElementById("bnd1_16").disabled = false;
+      document.getElementById("bnd1_07").checked = true;
+    }
+    else if(document.getElementById("bnd2_07").checked) {
+      document.getElementById("bnd1_01").disabled = true;
+      document.getElementById("bnd1_02").disabled = true;
+      document.getElementById("bnd1_03").disabled = true;
+      document.getElementById("bnd1_04").disabled = true;
+      document.getElementById("bnd1_05").disabled = true;
+      document.getElementById("bnd1_06").disabled = true;
+      document.getElementById("bnd1_07").disabled = true;
+      document.getElementById("bnd1_08").disabled = false;
+      document.getElementById("bnd1_09").disabled = false;
+      document.getElementById("bnd1_10").disabled = false;
+      document.getElementById("bnd1_11").disabled = false;
+      document.getElementById("bnd1_12").disabled = false;
+      document.getElementById("bnd1_13").disabled = false;
+      document.getElementById("bnd1_14").disabled = false;
+      document.getElementById("bnd1_15").disabled = false;
+      document.getElementById("bnd1_16").disabled = false;
+      document.getElementById("bnd1_08").checked = true;
+    }
+    else if(document.getElementById("bnd2_08").checked) {
+      document.getElementById("bnd1_01").disabled = true;
+      document.getElementById("bnd1_02").disabled = true;
+      document.getElementById("bnd1_03").disabled = true;
+      document.getElementById("bnd1_04").disabled = true;
+      document.getElementById("bnd1_05").disabled = true;
+      document.getElementById("bnd1_06").disabled = true;
+      document.getElementById("bnd1_07").disabled = true;
+      document.getElementById("bnd1_08").disabled = true;
+      document.getElementById("bnd1_09").disabled = false;
+      document.getElementById("bnd1_10").disabled = false;
+      document.getElementById("bnd1_11").disabled = false;
+      document.getElementById("bnd1_12").disabled = false;
+      document.getElementById("bnd1_13").disabled = false;
+      document.getElementById("bnd1_14").disabled = false;
+      document.getElementById("bnd1_15").disabled = false;
+      document.getElementById("bnd1_16").disabled = false;
+      document.getElementById("bnd1_09").checked = true;
+    }
+    else if(document.getElementById("bnd2_09").checked) {
+      document.getElementById("bnd1_01").disabled = true;
+      document.getElementById("bnd1_02").disabled = true;
+      document.getElementById("bnd1_03").disabled = true;
+      document.getElementById("bnd1_04").disabled = true;
+      document.getElementById("bnd1_05").disabled = true;
+      document.getElementById("bnd1_06").disabled = true;
+      document.getElementById("bnd1_07").disabled = true;
+      document.getElementById("bnd1_08").disabled = true;
+      document.getElementById("bnd1_09").disabled = true;
+      document.getElementById("bnd1_10").disabled = false;
+      document.getElementById("bnd1_11").disabled = false;
+      document.getElementById("bnd1_12").disabled = false;
+      document.getElementById("bnd1_13").disabled = false;
+      document.getElementById("bnd1_14").disabled = false;
+      document.getElementById("bnd1_15").disabled = false;
+      document.getElementById("bnd1_16").disabled = false;
+      document.getElementById("bnd1_10").checked = true;
+    }
+    else if(document.getElementById("bnd2_10").checked) {
+      document.getElementById("bnd1_01").disabled = true;
+      document.getElementById("bnd1_02").disabled = true;
+      document.getElementById("bnd1_03").disabled = true;
+      document.getElementById("bnd1_04").disabled = true;
+      document.getElementById("bnd1_05").disabled = true;
+      document.getElementById("bnd1_06").disabled = true;
+      document.getElementById("bnd1_07").disabled = true;
+      document.getElementById("bnd1_08").disabled = true;
+      document.getElementById("bnd1_09").disabled = true;
+      document.getElementById("bnd1_10").disabled = true;
+      document.getElementById("bnd1_11").disabled = false;
+      document.getElementById("bnd1_12").disabled = false;
+      document.getElementById("bnd1_13").disabled = false;
+      document.getElementById("bnd1_14").disabled = false;
+      document.getElementById("bnd1_15").disabled = false;
+      document.getElementById("bnd1_16").disabled = false;
+      document.getElementById("bnd1_11").checked = true;
+    }
+    else if(document.getElementById("bnd2_11").checked) {
+      document.getElementById("bnd1_01").disabled = true;
+      document.getElementById("bnd1_02").disabled = true;
+      document.getElementById("bnd1_03").disabled = true;
+      document.getElementById("bnd1_04").disabled = true;
+      document.getElementById("bnd1_05").disabled = true;
+      document.getElementById("bnd1_06").disabled = true;
+      document.getElementById("bnd1_07").disabled = true;
+      document.getElementById("bnd1_08").disabled = true;
+      document.getElementById("bnd1_09").disabled = true;
+      document.getElementById("bnd1_10").disabled = true;
+      document.getElementById("bnd1_11").disabled = true;
+      document.getElementById("bnd1_12").disabled = false;
+      document.getElementById("bnd1_13").disabled = false;
+      document.getElementById("bnd1_14").disabled = false;
+      document.getElementById("bnd1_15").disabled = false;
+      document.getElementById("bnd1_16").disabled = false;
+      document.getElementById("bnd1_12").checked = true;
+    }
+    else if(document.getElementById("bnd2_12").checked) {
+      document.getElementById("bnd1_01").disabled = true;
+      document.getElementById("bnd1_02").disabled = true;
+      document.getElementById("bnd1_03").disabled = true;
+      document.getElementById("bnd1_04").disabled = true;
+      document.getElementById("bnd1_05").disabled = true;
+      document.getElementById("bnd1_06").disabled = true;
+      document.getElementById("bnd1_07").disabled = true;
+      document.getElementById("bnd1_08").disabled = true;
+      document.getElementById("bnd1_09").disabled = true;
+      document.getElementById("bnd1_10").disabled = true;
+      document.getElementById("bnd1_11").disabled = true;
+      document.getElementById("bnd1_12").disabled = true;
+      document.getElementById("bnd1_13").disabled = false;
+      document.getElementById("bnd1_14").disabled = false;
+      document.getElementById("bnd1_15").disabled = false;
+      document.getElementById("bnd1_16").disabled = false;
+      document.getElementById("bnd1_13").checked = true;
+    }
+    else if(document.getElementById("bnd2_13").checked) {
+      document.getElementById("bnd1_01").disabled = true;
+      document.getElementById("bnd1_02").disabled = true;
+      document.getElementById("bnd1_03").disabled = true;
+      document.getElementById("bnd1_04").disabled = true;
+      document.getElementById("bnd1_05").disabled = true;
+      document.getElementById("bnd1_06").disabled = true;
+      document.getElementById("bnd1_07").disabled = true;
+      document.getElementById("bnd1_08").disabled = true;
+      document.getElementById("bnd1_09").disabled = true;
+      document.getElementById("bnd1_10").disabled = true;
+      document.getElementById("bnd1_11").disabled = true;
+      document.getElementById("bnd1_12").disabled = true;
+      document.getElementById("bnd1_13").disabled = true;
+      document.getElementById("bnd1_14").disabled = false;
+      document.getElementById("bnd1_15").disabled = false;
+      document.getElementById("bnd1_16").disabled = false;
+      document.getElementById("bnd1_14").checked = true;
+    }
+    else if(document.getElementById("bnd2_14").checked) {
+      document.getElementById("bnd1_01").disabled = true;
+      document.getElementById("bnd1_02").disabled = true;
+      document.getElementById("bnd1_03").disabled = true;
+      document.getElementById("bnd1_04").disabled = true;
+      document.getElementById("bnd1_05").disabled = true;
+      document.getElementById("bnd1_06").disabled = true;
+      document.getElementById("bnd1_07").disabled = true;
+      document.getElementById("bnd1_08").disabled = true;
+      document.getElementById("bnd1_09").disabled = true;
+      document.getElementById("bnd1_10").disabled = true;
+      document.getElementById("bnd1_11").disabled = true;
+      document.getElementById("bnd1_12").disabled = true;
+      document.getElementById("bnd1_13").disabled = true;
+      document.getElementById("bnd1_14").disabled = true;
+      document.getElementById("bnd1_15").disabled = false;
+      document.getElementById("bnd1_16").disabled = false;
+      document.getElementById("bnd1_15").checked = true;
+    }
+    else if(document.getElementById("bnd2_15").checked) {
+      document.getElementById("bnd1_01").disabled = true;
+      document.getElementById("bnd1_02").disabled = true;
+      document.getElementById("bnd1_03").disabled = true;
+      document.getElementById("bnd1_04").disabled = true;
+      document.getElementById("bnd1_05").disabled = true;
+      document.getElementById("bnd1_06").disabled = true;
+      document.getElementById("bnd1_07").disabled = true;
+      document.getElementById("bnd1_08").disabled = true;
+      document.getElementById("bnd1_09").disabled = true;
+      document.getElementById("bnd1_10").disabled = true;
+      document.getElementById("bnd1_11").disabled = true;
+      document.getElementById("bnd1_12").disabled = true;
+      document.getElementById("bnd1_13").disabled = true;
+      document.getElementById("bnd1_14").disabled = true;
+      document.getElementById("bnd1_15").disabled = true;
+      document.getElementById("bnd1_16").disabled = false;
+      document.getElementById("bnd1_16").checked = true;
+    }
+    else if(document.getElementById("bnd2_16").checked) {
+      document.getElementById("bnd1_01").disabled = true;
+      document.getElementById("bnd1_02").disabled = true;
+      document.getElementById("bnd1_03").disabled = true;
+      document.getElementById("bnd1_04").disabled = true;
+      document.getElementById("bnd1_05").disabled = true;
+      document.getElementById("bnd1_06").disabled = true;
+      document.getElementById("bnd1_07").disabled = true;
+      document.getElementById("bnd1_08").disabled = true;
+      document.getElementById("bnd1_09").disabled = true;
+      document.getElementById("bnd1_10").disabled = true;
+      document.getElementById("bnd1_11").disabled = true;
+      document.getElementById("bnd1_12").disabled = true;
+      document.getElementById("bnd1_13").disabled = true;
+      document.getElementById("bnd1_14").disabled = true;
+      document.getElementById("bnd1_15").disabled = true;
+      document.getElementById("bnd1_16").disabled = true;
+      document.getElementById("bnd1_02").checked = false;
+    }
+  }
+
+  function band1Changed() {
+  }
+</script>

@@ -1,0 +1,21 @@
+% layout 'wrapper', title => 'GOES-R Publications';
+
+<h1>GOES-R Publications</h1>
+
+<section class="publications">
+  <h2>Peer-Reviewed</h2>
+    <p><a href="http://dx.doi.org/10.1117/1.jrs.14.032405" target="_blank">"GOES-R series image navigation and registration performance assessment tool set," <em>Journal of Applied Remote Sensing, </em>2020</a>
+    <p><a href="http://dx.doi.org/10.1117/12.2529336" target="_blank">"GOES-16 and GOES-17 ABI INR assessment," <em>Earth Observing Systems XXIV, </em>2019</a>
+    <p><a href="http://dx.doi.org/10.3390/rs11182100" target="_blank">"Joint 3D-Wind Retrievals with Stereoscopic Views from MODIS and GOES," <em>Remote Sensing, </em>2019</a>
+    <p><a href="http://dx.doi.org/10.1117/12.2321170" target="_blank">"GOES-16 ABI navigation assessment," <em>Earth Observing Systems XXIII, </em>2018</a>
+</section>
+
+<section class="publications">
+  <h2>Instrument Documentation</h2>
+</section>
+
+<section class="publications">
+<h2>Websites</h2>
+  <p><a href="https://www.goes-r.gov/">www.goes-r.gov</a></p>
+  <p><a href="https://www.nesdis.noaa.gov/GOES-R-Series-Satellites">wwww.nesdis.noaa.gov</a></p>
+</section>

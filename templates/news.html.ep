@@ -1,0 +1,9 @@
+% layout 'wrapper', title => 'News';
+
+<h1>News</h1>
+
+<section>
+  <p>
+  Coming soon!
+  </p>
+</section>

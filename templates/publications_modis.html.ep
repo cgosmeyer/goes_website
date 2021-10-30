@@ -1,0 +1,41 @@
+% layout 'wrapper', title => 'MODIS Publications';
+
+<h1>MODIS Publications</h1>
+
+<section class="publications">
+  <h2>Peer-Reviewed</h2>
+    <p><a href="https://ieeexplore.ieee.org/document/8926456" target="_blank">"On-Orbit Measurement of the Effective Focal Length and Band-to-Band Registration of Satellite-Borne Whiskbroom Imaging Sensors," <em>IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing, </em>2019</a>
+    <p><a href="http://dx.doi.org/10.1117/12.2529447" target="_blank">"Thirty-six combined years of MODIS geolocation trending," <em>Earth Observing Systems XXIV, </em>2019</a>
+    <p><a href="http://dx.doi.org/10.3390/rs11182100" target="_blank">"Joint 3D-Wind Retrievals with Stereoscopic Views from MODIS and GOES," <em>Remote Sensing, </em>2019</a>
+    <p><a href="http://dx.doi.org/10.1109/tgrs.2016.2604214" target="_blank">"Impact of Spatial Sampling on Continuity of MODIS–VIIRS Land Surface Reflectance Products: A Simulation Approach," <em>IEEE Transactions on Geoscience and Remote Sensing, </em>2017</a>
+    <p><a href="http://dx.doi.org/10.1109/IGARSS.2012.6352484" target="_blank">"MODIS and VIIRS geometric performance comparison," <em>Geoscience and Remote Sensing Symposium (IGARSS), 2012 IEEE International, </em>2012</a>
+    <p><a href="http://dx.doi.org/10.1016/j.rse.2011.12.001" target="_blank">"Impact of sensor degradation on the MODIS NDVI time series," <em>Remote Sensing of Environment, </em>2012</a>
+    <p><a href="http://dx.doi.org/10.1109/igarss.2011.6050109 " target="_blank">"MODIS and VIIRS geolocation error and long-term trend analysis with automated correction techniques using Kalman filtering," <em>2011 IEEE International Geoscience and Remote Sensing Symposium, </em>2011</a>
+    <p><a href="http://dx.doi.org/10.1017/cbo9780511777684.022" target="_blank">"Accurate MODIS global geolocation through automated ground control image matching," <em>Image Registration for Remote Sensing, </em>2011</a>
+    <p><a href="http://dx.doi.org/10.1007/978-1-4419-6749-7_22 " target="_blank">"MODIS Land Data Products: Generation, Quality Assurance and Validation," <em>Land Remote Sensing and Global Environmental Change, </em>2011</a>
+    <p><a href="http://dx.doi.org/10.1007/978-1-4419-6749-7_7" target="_blank">"Terra and Aqua MODIS Design, Radiometry, and Geometry in Support of Land Remote Sensing," <em>Land Remote Sensing and Global Environmental Change, </em>2011</a>
+    <p><a href="http://dx.doi.org/10.1117/12.826598" target="_blank">"Trends in MODIS geolocation error analysis," <em>Earth Observing Systems XIV, </em>2009</a>
+    <p><a href="https://ieeexplore.ieee.org/document/4241437" target="_blank">"Improving Satellite Moderate Resolution Instrument Geolocation Accuracy in Rough Terrain," <em>2006 IEEE International Symposium on Geoscience and Remote Sensing, </em>2006</a>
+    <p><a href="http://dx.doi.org/10.1007/978-3-540-37293-6_4" target="_blank">"MODIS Geolocation," <em>Earth Science Satellite Remote Sensing, </em>2006</a>
+    <p><a href="http://dx.doi.org/10.1109/warsd.2003.1295225" target="_blank">"MODIS geolocation approach, results and the future," <em>IEEE Workshop on Advances in Techniques for Analysis of Remotely Sensed Data, </em>2003</a>
+    <p><a href="http://dx.doi.org/10.1016/S0034-4257(02)00085-8" target="_blank">"Achieving sub-pixel geolocation accuracy in support of MODIS land science," <em>Remote Sensing of Environment, </em>2002</a>
+    <p><a href="http://dx.doi.org/10.1109/igarss.2002.1027283" target="_blank">"MODIS geolocation error analysis developments," <em>IEEE International Geoscience and Remote Sensing Symposium, </em>2002</a>
+    <p><a href="http://dx.doi.org/10.1109/igarss.2001.978332" target="_blank">"MODIS level 2 grid with the ISIN map projection," <em>IGARSS 2001. Scanning the Present and Resolving the Future. Proceedings. IEEE 2001 International Geoscience and Remote Sensing Symposium, </em>2001</a>
+    <p><a href="http://dx.doi.org/10.1109/igarss.2000.861735" target="_blank">"MODIS band-to-band registration," <em>IGARSS 2000. IEEE 2000 International Geoscience and Remote Sensing Symposium. Taking the Pulse of the Planet: The Role of Remote Sensing in Managing the Environment. Proceedings, </em>2000</a>
+    <p><a href="http://dx.doi.org/10.1109/igarss.2000.858273" target="_blank">"The MODIS operational geolocation error analysis and reduction early results," <em>IGARSS 2000. IEEE 2000 International Geoscience and Remote Sensing Symposium. Taking the Pulse of the Planet: The Role of Remote Sensing in Managing the Environment. Proceedings, </em>2000</a>
+    <p><a href="http://dx.doi.org/10.1109/igarss.2000.858269" target="_blank">"MODIS geolocation algorithm and error analysis tools," <em>IGARSS 2000. IEEE 2000 International Geoscience and Remote Sensing Symposium. Taking the Pulse of the Planet: The Role of Remote Sensing in Managing the Environment. Proceedings, </em>2000</a>
+    <p><a href="http://dx.doi.org/10.1109/igarss.2000.858263" target="_blank">"Resources for developing algorithms and processing Level 1A and geolocation information," <em>IGARSS 2000. IEEE 2000 International Geoscience and Remote Sensing Symposium. Taking the Pulse of the Planet: The Role of Remote Sensing in Managing the Environment. Proceedings, </em>2000</a>
+    <p><a href="http://dx.doi.org/10.1109/igarss.1999.773529" target="_blank">"The MODIS operational geolocation error analysis and reduction methodology," <em>IEEE 1999 International Geoscience and Remote Sensing Symposium, </em>1999</a>
+    <p><a href="http://dx.doi.org/10.1109/igarss.1995.519668" target="_blank">"Geolocation of data from the Earth Observing System's MODIS instrument: an analysis of location accuracy," <em>1995 International Geoscience and Remote Sensing Symposium, IGARSS '95. Quantitative Remote Sensing for Science and Applications, </em>1995</a>
+</section>
+
+<section class="publications">
+  <h2>Instrument Documentation</h2>
+</section>
+
+<section class="publications">
+<h2>Websites</h2>
+  <p><a href="https://modis.gsfc.nasa.gov/">modis.gsfc.nasa.gov</a></p>
+
+  <p><a href="https://terra.nasa.gov/about/terra-instruments/modis">terra.nasa.gov</a></p>
+</section>

@@ -1,0 +1,78 @@
+% layout 'wrapper', title => 'About IPATS & Geolocation Team';
+
+<!-- About the team, website, and definitions. -->
+
+<section>
+  <h2>About the Team</h2>
+  <p>
+  </p>
+</section>
+
+<section>
+  <h2>About the Website</h2>
+  <p>
+  	Level-1B geolocation website for MODIS, VIIRS, and GOES-R ABI and GLM.
+  </p>
+  <p>
+  	Our goal is to facilitate simple storage, delivery, and exploration of IPATS results. 
+  </p>
+</section>
+
+<section>
+<h2>Definitions</h2>
+
+<h3>MODIS:</h3>
+<p>
+  Moderate-resolution Imaging Spectroradiometer of Terra (launched 1999) and Aqua (launched 2001). <a href="/publications_modis">More...</a>
+</p>
+
+<h3>VIIRS:</h3>
+<p>
+  Visible Infrared Imaging Radiometer Suite of the JPSS satellite, Suomi-NPP (launched October 2011). <a href="/publications_viirs">More...</a>
+</p>
+
+<h3>GOES-R:</h3>
+<p>
+  US Geostationary Operational Environmental Satellite R-series. GOES-16 (launched November 2017) and GOES-17 (launched March 2018) are currently in operation. <a href="/publications_goesr">More...</a>
+</p>
+
+<h3>ABI:</h3>
+<p>
+  Advanced Baseline Imager of the GOES-R series. ABI has 16 channels and produces 3 types of data: Full Disk, Continental U.S., and Mesoscale.
+</p>
+
+<h3>GLM:</h3>
+<p>
+ Geostationary Lightning Mapper of the GOES-R series.
+</p>
+
+<h3>INR:</h3>
+<p>
+  Image Navigation and Registration. 
+</p>
+
+<h3>IPATS:</h3>
+<p id="ipats">
+  INR Performace Assessment Tool Set. IPATS was developed to assess the GOES-R ABI and GLM INR performance. Read more in the <em><a href="http://dx.doi.org/10.1117/1.jrs.14.032405" target="_blank">JARS 2020</a></em> paper.
+</p>
+<p>
+  To fully assess the INR accuracy of level-1B ABI images, IPATS produces five types of INR quality assessment metrics:
+    <ul>
+      <li> Channel-to-channel registration (CCR) error: relative navigation error at corresponding
+image features of different channels in the same frame. Also known as BBR (band-to-band).</li>
+      <li> Frame-to-frame registration (FFR) error: relative navigation error of corresponding
+image features of same channel in consecutive images. </li>
+      <li> Navigation (NAV) error: difference between the location of an image feature
+and its true location. </li>
+      <li> Swath-to-swath registration (SSR) error: relative navigation error of two neighboring
+image features on opposite sides of the horizontal image swath boundary. </li>
+      <li> Within-frame registration (WIFR) error: difference between radial separation of two
+image features on the fixed grid coordinate system and their true angular separation. WIFR
+is calculated indirectly from the NAV results. </li>
+    </ul>
+</p>
+<p>
+  All 16 of ABI's channels are compared in FFR, every pair is compared in CCR, and only a subset of channels (1-7 and 11-16) are analyzed in NAV. IPATS outputs each metric into three aggregation schemes: no aggregation, scene-based aggregation, and daily aggregation. The <a href="/dashboard_form">Dashboard</a> uses daily aggregated results in its tables and uses the scene-based aggregation for its plots.
+</p>
+
+</section>
