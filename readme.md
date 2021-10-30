@@ -2,7 +2,7 @@
 
 ## Introduction
 
-Level-1B geolocation website for users of NASA/NOAA's remote sensing instruments MODIS, VIIRS, and GOES-R ABI and GLM. Our goal is to facilitate simple storage, delivery, and exploration of geolocation characterization results. 
+Level-1B geolocation website for users of NASA/NOAA's remote sensing instruments, primarily GOES-R ABI and GLM. Our goal is to facilitate simple storage, delivery, and exploration of geolocation characterization results. 
 
 This is a dummy version of the website. Not all of the code is here. The website is not yet public but some version will be someday. Thank you, beauracracy. 
 
