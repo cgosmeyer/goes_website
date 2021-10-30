@@ -112,7 +112,7 @@ Main Page:
 
 Dashboard Form:
 
-![Dashboard Form](![image](https://user-images.githubusercontent.com/5558042/139557032-c774e6ce-a089-4161-8517-37a10610b9df.png)
+![Dashboard Form](https://user-images.githubusercontent.com/5558042/139557032-c774e6ce-a089-4161-8517-37a10610b9df.png)
 
 Dashboard:
 
